@@ -3,13 +3,33 @@ import numpy as np
 from collections import Counter
 from sklearn.feature_extraction.text import CountVectorizer
 
-# Set length of n-grams
-NG=3
 
-with open('text_samples/obama.txt', 'r') as f:
-    text = f.read()[57:].decode('UTF-8').replace('\n', ' ')
-    
-#text = re.sub(r'","|",|"', ',', re.sub(r'(?:(\d+?),)',r'\1',text)) # get rid of the commas in large numbers
+def generate_tweet():
+    # Set length of n-grams
+    NG=3
+
+    with open('text_samples/obama.txt', 'r') as f:
+        text = f.read()[57:].decode('UTF-8').replace('\n', ' ')
+
+    #text = re.sub(r'","|",|"', ',', re.sub(r'(?:(\d+?),)',r'\1',text)) # get rid of the commas in large numbers
+
+    beginning = get_beginning(NG, text)
+    # vocab_counts2 = vectorize(text, NG)
+    # vocab_counts2 = [(t,c) for (t,c) in vocab_counts2 if c>2]
+    vocab_counts3 = vectorize(text, NG+1)
+    sentence = make_sentence(beginning, vocab_counts3, NG)
+
+
+    # Get one that's the right length
+    def format_sentence(sent):
+        return sent.replace(' .', '.').replace(' ?', '?')
+
+    while len(format_sentence(sentence)) > 139:
+        sentence = make_sentence(beginning, vocab_counts3, NG)
+        
+    return format_sentence(sentence)
+
+
 
 # find sentence beginnings
 def get_beginning(ng, text):
@@ -57,19 +77,3 @@ def make_sentence(beginning, vocab_counts3, ng=2):
             return sent
         
     return sent
-
-beginning = get_beginning(NG, text)
-# vocab_counts2 = vectorize(text, NG)
-# vocab_counts2 = [(t,c) for (t,c) in vocab_counts2 if c>2]
-vocab_counts3 = vectorize(text, NG+1)
-sentence = make_sentence(beginning, vocab_counts3, NG)
-
-
-# Get one that's the right length
-def format_sentence(sent):
-    return sent.replace(' .', '.').replace(' ?', '?')
-
-while len(format_sentence(sentence)) > 139:
-    sentence = make_sentence(beginning, vocab_counts3, NG)
-    
-print format_sentence(sentence)
