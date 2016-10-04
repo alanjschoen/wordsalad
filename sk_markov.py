@@ -4,9 +4,11 @@ from collections import Counter
 from sklearn.feature_extraction.text import CountVectorizer
 
 
+# Set length of n-grams
+NG=3
+
 def generate_tweet():
-    # Set length of n-grams
-    NG=3
+    
 
     with open('text_samples/obama.txt', 'r') as f:
         text = f.read()[57:].decode('UTF-8').replace('\n', ' ')
