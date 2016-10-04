@@ -17,7 +17,7 @@ print tweet_text
 
 
 import cnfg
-config = cnfg.load(".twitter_config_robama")
+config = cnfg.load("~/.twitter_config_robama")
 auth = tweepy.OAuthHandler(config["consumer_key"],
                            config["consumer_secret"])
 auth.set_access_token(config["access_token"],
