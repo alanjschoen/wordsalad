@@ -10,11 +10,10 @@ import numpy as np
 #     sentences =  [s + '.' for s in sentences[1:] if len(s) < 140]
 # tweet_text = sentences[np.argmax(map(len, sentences))]
 
-tweet_text = os.popen('python sk_markov.py').read()
 
+from sk_markov import generate_tweet
+tweet_text = generate_tweet()
 print tweet_text
-
-
 
 import cnfg
 config = cnfg.load(".twitter_config_robama")
