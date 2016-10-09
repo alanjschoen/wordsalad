@@ -3,13 +3,18 @@ import numpy as np
 from collections import Counter
 from sklearn.feature_extraction.text import CountVectorizer
 
-
 # Set length of n-grams
 NG=3
 
-def generate_tweet():
-    
+# Get one that's the right length
+def format_sentence(sent):
+    return sent.replace(' .', '.').replace(' ?', '?')
 
+# Check if a sentence is finished
+def is_finished(sent):
+    return sent[-2:] in [' .', ' ?']
+
+def generate_tweet():
     with open('text_samples/obama.txt', 'r') as f:
         text = f.read()[57:].decode('UTF-8').replace('\n', ' ')
 
@@ -21,17 +26,10 @@ def generate_tweet():
     vocab_counts3 = vectorize(text, NG+1)
     sentence = make_sentence(beginning, vocab_counts3, NG)
 
-
-    # Get one that's the right length
-    def format_sentence(sent):
-        return sent.replace(' .', '.').replace(' ?', '?')
-
     while len(format_sentence(sentence)) > 139:
         sentence = make_sentence(beginning, vocab_counts3, NG)
         
     return format_sentence(sentence)
-
-
 
 # find sentence beginnings
 def get_beginning(ng, text):
@@ -57,16 +55,11 @@ def vectorize(text, n):
     return vocab_counts
 
 
-
 # Given a tuple, find the nuxt word
 def get_next_word(gram, vocab_counts3):
     options = [(t3.split()[NG], c3)  for  t3, c3 in vocab_counts3 if ' '.join(t3.split()[:-1]) == gram]
     next_words, counts = zip(*options)
     return np.random.choice(a=next_words, p = np.array(counts).astype(float) / np.sum(counts))
-    
-# Check if a sentence is finished
-def is_finished(sent):
-    return sent[-2:] in [' .', ' ?']
     
 # Mke a sentence, given a beginning
 def make_sentence(beginning, vocab_counts3, ng=2):
@@ -77,5 +70,4 @@ def make_sentence(beginning, vocab_counts3, ng=2):
         
         if is_finished(sent) and len(sent) > 80:
             return sent
-        
     return sent
